@@ -1,0 +1,16 @@
+#WORK IN PROGRESS
+#Sequentially join files 
+
+join -t $'\t' -1 1 -2 1 -a 1 -a 2 -o auto \
+ <(sort -t $'\t' -k1,1 "1-A01_mgcomg_readcounts_simple.tsv") \
+ <(sort -t $'\t' -k1,1 "1-A04_mgcomg_readcounts_simple.tsv") \
+  > exp_readcounts_matrix.tsv
+
+
+for sample in $(cat /project/6105702/CMO_2024_Metagenome/CMO2024_gene_rpm/mg/coassembly/EXP_samplenames_mg.txt); do
+join -t $'\t' -1 1 -2 1 -a 1 -a 2 -o auto \
+ <(sort -t $'\t' -k1,1 "exp_readcounts_matrix.tsv") \
+ <(sort -t $'\t' -k1,1 "${sample}_mgcomg_readcounts_simple.tsv") \
+  > tmp_exp_readcounts_matrix.tsv
+mv tmp_exp_readcounts_matrix.tsv exp_readcounts_matrix.tsv;
+done

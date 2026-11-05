@@ -4,7 +4,7 @@ library(tidyverse)
 library(ggplot2)
 
 ### read in raw mapq file output firect from the bam files
-lines <- readLines("path/to/mapq_scores.txt")
+lines <- readLines("path/to/mapq_raw_single.txt")
 lines <- lines[nzchar(trimws(lines))]
 
 is_hdr <- grepl("^== ", lines)

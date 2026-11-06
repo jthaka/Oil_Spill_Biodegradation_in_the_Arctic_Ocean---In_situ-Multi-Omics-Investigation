@@ -1,27 +1,24 @@
-#Single assembly (NOTE: co-assembly was also performed, but fastq files were concatenated prior and inputed into the same code below)
-set -euo pipefail
-set -x
-mkdir -p ./logs
+#Requires short-read and longread sequences
 
-# Load required environment
+#Load required environment in DRAC cluster
 module load spades
 
-sample=$(sed -n "${SLURM_ARRAY_TASK_ID}p" ./sample_codes.txt)
+#Set required inputs
+sample_list=path/to/sample/list.txt
+r1=path/to/forward/reads/${sample}_R1.fastq.gz
+r2=path/to/reverse/reads/${sample}_R2.fastq.gz
+nano=path/to/nanopore/reads/${sample}.fastq.gz
+outdir=path/to/desired/output/dir
+mkdir -p ${outdir}
 
-exec > ./logs/operams_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}_${sample}.out
-exec 2> ./logs/operams_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}_${sample}.err
-
-echo "Running sample: $sample"
-echo "Task ID: $SLURM_ARRAY_TASK_ID"
-echo "Node: $(hostname)"
-date
+sample=$(sed -n "${SLURM_ARRAY_TASK_ID}p" ${sample_list})
 
 # Run HybridSPAdes
 metaspades.py \
-  -1 /home/jthakar/projects/def-nagissa/CMO_2024_Metagenome/illumina_fastq/9385/clean_fastq/${sample}_clean_R1.fastq.gz\
-  -2 /home/jthakar/projects/def-nagissa/CMO_2024_Metagenome/illumina_fastq/9385/clean_fastq/${sample}_clean_R2.fastq.gz \
---nanopore /home/jthakar/projects/def-nagissa/CMO_2024_Metagenome/CMO2024_nanopore/non_concat/concat_nanopore/${sample}_nanopore.fastq \
-  -o /home/jthakar/scratch/hybrid_spades_test/metaspades_hybrid_single_${sample} \
+  -1 ${r1}\
+  -2 ${r2} \
+--nanopore ${nano} \
+  -o ${outdir} \
   --meta \
   -k 33,55,77,99,127 \
   -m 90 \

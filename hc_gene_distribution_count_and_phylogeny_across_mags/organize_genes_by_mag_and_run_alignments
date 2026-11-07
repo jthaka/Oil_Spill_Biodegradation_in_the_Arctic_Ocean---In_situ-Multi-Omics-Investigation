@@ -1,3 +1,4 @@
+
 #Goal: organize hits for hydrocarbon degrading marker genes, extract relevant FNA and AA seqs,
 #construct multiple sequence alignments, and filter alignments for quality control.
     ##Provides alignments for downstream analyses. There are numerous marker genes, so I wrote this script to go from an hmm output

@@ -22,4 +22,19 @@ catbat <- merge(catbat, meta_names)
 colnames(catbat) <- c("Overall_TaxID", "node", "n", "Overall_Lineage")
 taxa <- merge(taxa, catbat)
 
-write.csv(taxa, "~/Downloads/CMO/mg_taxonomy_24/mg_catbat_co_exp.csv")
+#Separate the overall lineage field into separate fields per taxonomic rank
+ranks <- c("domain", "phylum", "class", "order", "family", "genus", "species")
+
+taxa=taxa |>
+  separate_wider_delim(
+    Overall_Lineage, delim = ";", names = ranks,
+    too_few = "align_start",   # short strings get NA in the missing levels
+    too_many = "merge",        # extra levels get merged into species
+    cols_remove = FALSE        # keep the original tax column
+  ) |>
+  mutate(across(all_of(ranks), ~ na_if(str_trim(.x), "")))
+
+
+write.csv(taxa, "path/to/output.csv")
+
+
